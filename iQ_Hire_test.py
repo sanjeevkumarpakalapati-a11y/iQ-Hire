@@ -19,7 +19,7 @@ def get_db_connection():
         conn = MySQLdb.connect(
             host="Sanjeevkumar616.mysql.pythonanywhere-services.com",  # PythonAnywhere MySQL host
             user="Sanjeevkumar616",                                    # your PythonAnywhere username
-            passwd="Sanjeev@123",                               # your MySQL password
+            passwd="sanjeev@123",                               # your MySQL password
             db="Sanjeevkumar616$iq_hire_test",                         # your database name
             charset='utf8mb4'
         )
