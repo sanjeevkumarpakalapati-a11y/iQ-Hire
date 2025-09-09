@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviews - Recruiting Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='recruiter_all__.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-briefcase"></i>
+                    <span>RecruiteHub</span>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('jobs') }}" class="nav-link">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Jobs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('candidates') }}" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Candidates</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="{{ url_for('interviews') }}" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interviews</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('analytics') }}"  class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Interview Schedule</h1>
+                    <p>Manage and track all scheduled interviews and meetings.</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" id="scheduleInterviewBtn">
+                        <i class="fas fa-plus"></i>
+                        Schedule Interview
+                    </button>
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40x40" alt="Profile" class="profile-img">
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Calendar View Toggle -->
+            <section class="view-controls">
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="calendar">
+                        <i class="fas fa-calendar"></i>
+                        Calendar View
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                        List View
+                    </button>
+                </div>
+                <div class="date-navigation">
+                    <button class="nav-btn" id="prevWeek">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="current-date" id="currentWeek">Week of March 18, 2024</span>
+                    <button class="nav-btn" id="nextWeek">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="btn btn-secondary" id="todayBtn">Today</button>
+                </div>
+            </section>
+
+            <!-- Calendar View -->
+            <section class="calendar-view" id="calendarView">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="time-column">Time</div>
+                        <div class="day-column">Monday<br><span class="date">18</span></div>
+                        <div class="day-column">Tuesday<br><span class="date">19</span></div>
+                        <div class="day-column">Wednesday<br><span class="date">20</span></div>
+                        <div class="day-column">Thursday<br><span class="date">21</span></div>
+                        <div class="day-column">Friday<br><span class="date">22</span></div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar events will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- List View -->
+            <section class="list-view hidden" id="listView">
+                <div class="interviews-list">
+                    <div class="list-header">
+                        <div class="filter-group">
+                            <select id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <select id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="phone">Phone</option>
+                                <option value="video">Video Call</option>
+                                <option value="in-person">In-person</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="interviews-grid" id="interviewsList">
+                        <!-- Interview cards will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Schedule Interview Modal -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Schedule Interview</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <form class="modal-body" id="scheduleForm">
+                <div class="form-group">
+                    <label for="candidateSelect">Candidate</label>
+                    <select id="candidateSelect" required>
+                        <option value="">Select Candidate</option>
+                        <option value="sarah-johnson">Sarah Johnson</option>
+                        <option value="mike-chen">Mike Chen</option>
+                        <option value="emily-davis">Emily Davis</option>
+                        <option value="david-wilson">David Wilson</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="positionSelect">Position</label>
+                    <select id="positionSelect" required>
+                        <option value="">Select Position</option>
+                        <option value="frontend-developer">Frontend Developer</option>
+                        <option value="ux-designer">UX Designer</option>
+                        <option value="product-manager">Product Manager</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="interviewDate">Date</label>
+                        <input type="date" id="interviewDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="interviewTime">Time</label>
+                        <input type="time" id="interviewTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="interviewType">Interview Type</label>
+                    <select id="interviewType" required>
+                        <option value="">Select Type</option>
+                        <option value="phone">Phone Call</option>
+                        <option value="video">Video Call</option>
+                        <option value="in-person">In-person</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="interviewerSelect">Interviewer</label>
+                    <select id="interviewerSelect" required>
+                        <option value="">Select Interviewer</option>
+                        <option value="john-doe">John Doe</option>
+                        <option value="jane-smith">Jane Smith</option>
+                        <option value="bob-johnson">Bob Johnson</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="interviewNotes">Notes</label>
+                    <textarea id="interviewNotes" rows="3" placeholder="Add any additional notes or instructions..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Schedule Interview</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interview Details Modal -->
+    <div class="modal" id="interviewDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="interviewTitle">Interview Details</h2>
+                <button class="modal-close" id="closeDetailsModal">&times;</button>
+            </div>
+            <div class="modal-body interview-details">
+                <div class="details-section">
+                    <div class="candidate-info">
+                        <div class="candidate-avatar" id="detailsAvatar">SJ</div>
+                        <div class="candidate-details">
+                            <h3 id="detailsCandidateName">Sarah Johnson</h3>
+                            <p id="detailsPosition">Frontend Developer</p>
+                            <div class="contact-info">
+                                <span id="detailsEmail">sarah.johnson@email.com</span>
+                                <span id="detailsPhone">+1 (555) 123-4567</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interview-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Date & Time</label>
+                            <span id="detailsDateTime">March 20, 2024 at 2:00 PM</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Type</label>
+                            <span id="detailsType">Video Call</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Interviewer</label>
+                            <span id="detailsInterviewer">John Doe</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Status</label>
+                            <span id="detailsStatus" class="status-badge scheduled">Scheduled</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interview-notes">
+                    <h4>Notes</h4>
+                    <textarea id="detailsNotes" placeholder="Add interview notes and feedback..."></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-danger" id="cancelInterviewBtn">Cancel Interview</button>
+                    <button class="btn btn-secondary" id="rescheduleBtn">Reschedule</button>
+                    <button class="btn btn-primary" id="saveNotesBtn">Save Notes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='interviews.js') }}"></script>
+</body>
+</html>

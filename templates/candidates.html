@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidates - Recruiting Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='recruiter_all__.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-briefcase"></i>
+                    <span>RecruiteHub</span>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="{{ url_for('dashboard')}}" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('jobs')}}" class="nav-link">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Jobs</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="{{ url_for('candidates')}}" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Candidates</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('interviews')}}" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interviews</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('analytics')}}" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Candidates</h1>
+                    <p>Manage and track all candidate applications and profiles.</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" id="importCandidatesBtn">
+                        <i class="fas fa-upload"></i>
+                        Import Candidates
+                    </button>
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40x40" alt="Profile" class="profile-img">
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filters and Search -->
+            <section class="filters-section">
+                <div class="search-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search candidates..." id="searchInput">
+                    </div>
+                    <div class="filter-group">
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="applied">Applied</option>
+                            <option value="screening">Screening</option>
+                            <option value="interview">Interview</option>
+                            <option value="final-review">Final Review</option>
+                            <option value="hired">Hired</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <select id="positionFilter">
+                            <option value="">All Positions</option>
+                            <option value="frontend-developer">Frontend Developer</option>
+                            <option value="ux-designer">UX Designer</option>
+                            <option value="product-manager">Product Manager</option>
+                            <option value="backend-developer">Backend Developer</option>
+                        </select>
+                        <select id="experienceFilter">
+                            <option value="">All Experience</option>
+                            <option value="junior">Junior (0-2 years)</option>
+                            <option value="mid">Mid (3-5 years)</option>
+                            <option value="senior">Senior (6+ years)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Candidates Table -->
+            <section class="candidates-table-section">
+                <div class="table-container">
+                    <table class="candidates-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll">
+                                </th>
+                                <th>Candidate</th>
+                                <th>Position</th>
+                                <th>Experience</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidatesTableBody">
+                            <!-- Candidates will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="pagination-btn" id="prevBtn">Previous</button>
+                <div class="pagination-numbers" id="paginationNumbers"></div>
+                <button class="pagination-btn" id="nextBtn">Next</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Candidate Profile Modal -->
+    <div class="modal large" id="candidateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="candidateName">Candidate Profile</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body candidate-profile">
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profileAvatar">JD</div>
+                        <div class="profile-info">
+                            <h3 id="profileName">John Doe</h3>
+                            <p id="profilePosition">Frontend Developer</p>
+                            <div class="profile-contact">
+                                <span id="profileEmail">john.doe@email.com</span>
+                                <span id="profilePhone">+1 (555) 123-4567</span>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button class="btn btn-primary" id="scheduleInterviewBtn">
+                                <i class="fas fa-calendar"></i>
+                                Schedule Interview
+                            </button>
+                            <button class="btn btn-secondary" id="downloadResumeBtn">
+                                <i class="fas fa-download"></i>
+                                Download Resume
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-content">
+                    <div class="profile-sidebar">
+                        <div class="sidebar-section">
+                            <h4>Skills</h4>
+                            <div class="skills-list" id="candidateSkills">
+                                <!-- Skills will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-section">
+                            <h4>Experience</h4>
+                            <p id="candidateExperience">5 years</p>
+                        </div>
+                        
+                        <div class="sidebar-section">
+                            <h4>Rating</h4>
+                            <div class="rating-stars" id="candidateRating">
+                                <!-- Rating will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="sidebar-section">
+                            <h4>Status</h4>
+                            <select id="candidateStatusSelect" class="status-select">
+                                <option value="applied">Applied</option>
+                                <option value="screening">Screening</option>
+                                <option value="interview">Interview</option>
+                                <option value="final-review">Final Review</option>
+                                <option value="hired">Hired</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-main">
+                        <div class="tab-navigation">
+                            <button class="tab-btn active" data-tab="summary">Summary</button>
+                            <button class="tab-btn" data-tab="experience">Experience</button>
+                            <button class="tab-btn" data-tab="education">Education</button>
+                            <button class="tab-btn" data-tab="notes">Notes</button>
+                        </div>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="summary">
+                                <h4>Professional Summary</h4>
+                                <p id="candidateSummary">
+                                    Experienced frontend developer with 5+ years of expertise in React, JavaScript, and modern web technologies. 
+                                    Passionate about creating user-friendly interfaces and optimizing performance.
+                                </p>
+                            </div>
+                            
+                            <div class="tab-pane" id="experience">
+                                <h4>Work Experience</h4>
+                                <div class="experience-list" id="candidateWorkExperience">
+                                    <!-- Experience will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane" id="education">
+                                <h4>Education</h4>
+                                <div class="education-list" id="candidateEducation">
+                                    <!-- Education will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane" id="notes">
+                                <h4>Interview Notes</h4>
+                                <div class="notes-section">
+                                    <textarea id="candidateNotes" placeholder="Add notes about this candidate..."></textarea>
+                                    <button class="btn btn-primary" id="saveNotesBtn">Save Notes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='candidates.js') }}"></script>
+</body>
+</html>

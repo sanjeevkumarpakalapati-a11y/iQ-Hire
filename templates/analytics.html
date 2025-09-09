@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Recruiting Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='recruiter_all__.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-briefcase"></i>
+                    <span>RecruiteHub</span>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('jobs') }}" class="nav-link">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Jobs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('candidates') }}" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Candidates</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('interviews') }}" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interviews</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="{{ url_for('analytics') }}" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Analytics & Reports</h1>
+                    <p>Track recruitment performance and generate insights.</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-secondary" id="exportReportBtn">
+                        <i class="fas fa-download"></i>
+                        Export Report
+                    </button>
+                    <select class="date-range-select" id="dateRangeSelect">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                    </select>
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40x40" alt="Profile" class="profile-img">
+                        <span>John Doe</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- KPI Cards -->
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>1,248</h3>
+                        <p>Total Applications</p>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+15.2% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>28</h3>
+                        <p>Successful Hires</p>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+8.7% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>18.5</h3>
+                        <p>Avg. Days to Hire</p>
+                        <div class="kpi-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-3.2% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon info">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>2.2%</h3>
+                        <p>Conversion Rate</p>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+0.4% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="analytics-grid">
+                <!-- Applications Trend -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Applications Trend</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn active" data-period="week">Week</button>
+                            <button class="chart-btn" data-period="month">Month</button>
+                            <button class="chart-btn" data-period="quarter">Quarter</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="applicationsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Source Performance -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Application Sources</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="sourcesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Hiring Funnel -->
+                <div class="chart-card full-width">
+                    <div class="chart-header">
+                        <h3>Hiring Funnel</h3>
+                        <p class="chart-subtitle">Candidate progression through recruitment stages</p>
+                    </div>
+                    <div class="funnel-container">
+                        <div class="funnel-stage">
+                            <div class="funnel-bar" style="width: 100%;">
+                                <span class="funnel-label">Applications</span>
+                                <span class="funnel-count">1,248</span>
+                            </div>
+                        </div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar" style="width: 45%;">
+                                <span class="funnel-label">Screening</span>
+                                <span class="funnel-count">562</span>
+                            </div>
+                        </div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar" style="width: 25%;">
+                                <span class="funnel-label">First Interview</span>
+                                <span class="funnel-count">312</span>
+                            </div>
+                        </div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar" style="width: 15%;">
+                                <span class="funnel-label">Final Interview</span>
+                                <span class="funnel-count">187</span>
+                            </div>
+                        </div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar" style="width: 8%;">
+                                <span class="funnel-label">Job Offer</span>
+                                <span class="funnel-count">100</span>
+                            </div>
+                        </div>
+                        <div class="funnel-stage">
+                            <div class="funnel-bar" style="width: 5.6%;">
+                                <span class="funnel-label">Hired</span>
+                                <span class="funnel-count">70</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Performance -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Department Performance</h3>
+                    </div>
+                    <div class="department-stats">
+                        <div class="dept-item">
+                            <div class="dept-info">
+                                <span class="dept-name">Technology</span>
+                                <span class="dept-positions">12 positions</span>
+                            </div>
+                            <div class="dept-metrics">
+                                <span class="dept-applications">456 applications</span>
+                                <span class="dept-hired">18 hired</span>
+                                <span class="dept-rate success">3.9% rate</span>
+                            </div>
+                        </div>
+                        <div class="dept-item">
+                            <div class="dept-info">
+                                <span class="dept-name">Design</span>
+                                <span class="dept-positions">6 positions</span>
+                            </div>
+                            <div class="dept-metrics">
+                                <span class="dept-applications">234 applications</span>
+                                <span class="dept-hired">8 hired</span>
+                                <span class="dept-rate success">3.4% rate</span>
+                            </div>
+                        </div>
+                        <div class="dept-item">
+                            <div class="dept-info">
+                                <span class="dept-name">Marketing</span>
+                                <span class="dept-positions">4 positions</span>
+                            </div>
+                            <div class="dept-metrics">
+                                <span class="dept-applications">198 applications</span>
+                                <span class="dept-hired">5 hired</span>
+                                <span class="dept-rate warning">2.5% rate</span>
+                            </div>
+                        </div>
+                        <div class="dept-item">
+                            <div class="dept-info">
+                                <span class="dept-name">Sales</span>
+                                <span class="dept-positions">8 positions</span>
+                            </div>
+                            <div class="dept-metrics">
+                                <span class="dept-applications">312 applications</span>
+                                <span class="dept-hired">12 hired</span>
+                                <span class="dept-rate success">3.8% rate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time to Hire -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Time to Hire Trends</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="timeToHireChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section class="reports-section">
+                <div class="section-header">
+                    <h2>Recent Reports</h2>
+                    <button class="btn btn-primary" id="generateReportBtn">
+                        <i class="fas fa-plus"></i>
+                        Generate Report
+                    </button>
+                </div>
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h4>Monthly Hiring Report</h4>
+                            <span class="report-date">March 2024</span>
+                        </div>
+                        <div class="report-content">
+                            <p>Comprehensive analysis of hiring performance for March 2024</p>
+                            <div class="report-stats">
+                                <span>28 hires • 1,248 applications • 2.2% conversion</span>
+                            </div>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn btn-sm btn-secondary">View</button>
+                            <button class="btn btn-sm btn-primary">Download</button>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h4>Department Analysis</h4>
+                            <span class="report-date">Q1 2024</span>
+                        </div>
+                        <div class="report-content">
+                            <p>Department-wise recruitment performance and insights</p>
+                            <div class="report-stats">
+                                <span>4 departments • 30 positions • 83 total hires</span>
+                            </div>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn btn-sm btn-secondary">View</button>
+                            <button class="btn btn-sm btn-primary">Download</button>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h4>Source Effectiveness</h4>
+                            <span class="report-date">February 2024</span>
+                        </div>
+                        <div class="report-content">
+                            <p>Analysis of application sources and their conversion rates</p>
+                            <div class="report-stats">
+                                <span>8 sources • LinkedIn leads with 4.2% conversion</span>
+                            </div>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn btn-sm btn-secondary">View</button>
+                            <button class="btn btn-sm btn-primary">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='analytics.js') }}"></script>
+</body>
+</html>
