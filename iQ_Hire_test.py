@@ -16,17 +16,17 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # ---------------------------
 def get_db_connection():
     try:
-        conn = pyodbc.connect(
-            'DRIVER={ODBC Driver 17 for SQL Server};'
-            'SERVER=DESKTOP-BIPREQM\\SQLEXPRESS;'
-            'DATABASE=iQ_Hire_test;'
-            'Trusted_Connection=yes;'
+        conn = MySQLdb.connect(
+            host="Sanjeevkumar616.mysql.pythonanywhere-services.com",  # PythonAnywhere MySQL host
+            user="Sanjeevkumar616",                                    # your PythonAnywhere username
+            passwd="Sanjeev@123",                               # your MySQL password
+            db="Sanjeevkumar616$iq_hire_test",                         # your database name
+            charset='utf8mb4'
         )
         return conn
     except Exception as e:
         print(f"❌ Database connection failed: {e}")
         return None
-
 
 # ---------------------------
 # Serve uploaded files
